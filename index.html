@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Microwave Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.5s ease-in-out;
+            min-height: 100vh;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .button-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button-shadow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .undercooked { color: #f88c8c; }
+        .cooked { color: #3ad89e; }
+        .overcooked { color: #f66d0b; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse-once {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        
+        @keyframes bg-happy-pulse {
+            0%, 100% { background-color: #55364b; }
+            50% { background-color: #6a2452; }
+        }
+        .mood-happy {
+            background-color: #5a1846;
+            animation: bg-happy-pulse 4s infinite ease-in-out;
+        }
+
+        @keyframes bg-excited-pulse {
+            0%, 100% { background-color: #6a4a00; }
+            50% { background-color: #8b6200; }
+        }
+        .mood-excited {
+            background-color: #6a4a00;
+            animation: bg-excited-pulse 0.8s infinite alternate;
+        }
+
+        @keyframes bg-sad-pulse {
+            0%, 100% { background-color: #2c3e50; }
+            50% { background-color: #3b5065; }
+        }
+        .mood-sad {
+            background-color: #2c3e50;
+            animation: bg-sad-pulse 5s infinite linear;
+        }
+
+        @keyframes bg-angry-pulse {
+            0%, 100% { background-color: #8b0000; }
+            50% { background-color: #a30000; }
+        }
+        .mood-angry {
+            background-color: #8b0000;
+            animation: bg-angry-pulse 0.3s infinite alternate;
+        }
+
+        @keyframes food-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .heating-food {
+            animation: food-pulse 0.5s infinite ease-in-out;
+        }
+
+    </style>
+</head>
+<body class="mood-happy flex items-center justify-center p-4">
+
+    <div id="simulator-container" class="w-full max-w-2xl bg-gray-900 p-8 rounded-3xl shadow-2xl transition-all duration-500">
+
+        
+        <div id="mood-screen" class="screen flex flex-col items-center text-center space-y-6 active">
+            <h1 class="text-4xl font-bold text-gray-200">How are you feeling darling ?</h1>
+            <p class="text-gray-400">What is your current mood ?</p>
+            <div id="mood-options" class="grid grid-cols-2 sm:grid-cols-4 gap-6 w-full">
+                <button onclick="selectMood('happy')" class="p-4 rounded-2xl flex flex-col items-center space-y-2 font-bold transition-all bg-pink-700 hover:bg-pink-800 text-white button-shadow">
+                    <span class="text-5xl">😊</span><span>Happy</span>
+                </button>
+                <button onclick="selectMood('excited')" class="p-4 rounded-2xl flex flex-col items-center space-y-2 font-bold transition-all bg-amber-700 hover:bg-amber-800 text-white button-shadow">
+                    <span class="text-5xl">🤩</span><span>Excited</span>
+                </button>
+                <button onclick="selectMood('sad')" class="p-4 rounded-2xl flex flex-col items-center space-y-2 font-bold transition-all bg-gray-700 hover:bg-gray-800 text-white button-shadow">
+                    <span class="text-5xl">😞</span><span>Sad</span>
+                </button>
+                <button onclick="selectMood('angry')" class="p-4 rounded-2xl flex flex-col items-center space-y-2 font-bold transition-all bg-red-800 hover:bg-red-900 text-white button-shadow">
+                    <span class="text-5xl">😡</span><span>Angry</span>
+                </button>
+            </div>
+        </div>
+
+        
+        <div id="food-screen" class="screen flex flex-col items-center text-center space-y-6">
+            <h2 id="food-title" class="text-3xl font-bold text-gray-200"></h2>
+            <p id="food-description" class="text-gray-400"></p>
+            <div id="food-options" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+               
+            </div>
+        </div>
+
+       
+        <div id="microwave-screen" class="screen flex flex-col items-center text-center space-y-8">
+            <div class="relative w-full max-w-sm h-64 bg-gray-800 rounded-2xl shadow-inner flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 bg-gray-700/50 flex flex-col justify-center items-center opacity-0 transition-opacity duration-500" id="heating-overlay">
+                    <p class="text-white text-lg font-bold">Heating...</p>
+                    <div id="decibel-meter" class="mt-2 w-24 h-4 bg-gray-400 rounded-full overflow-hidden">
+                        <div id="decibel-bar" class="h-full bg-green-500 transition-all duration-100 ease-linear"></div>
+                    </div>
+                </div>
+                <div class="relative w-3/4 h-3/4 bg-white/50 rounded-lg shadow-lg flex items-center justify-center z-10">
+                    <span id="selected-food-icon" class="text-5xl">🍕</span>
+                </div>
+            </div>
+            <p class="text-gray-400" id="microwave-message">Scream out your lungs for the food!</p>
+            <button onclick="stopHeating()" id="stop-btn" class="bg-red-800 hover:bg-red-900 text-white font-bold py-4 px-8 rounded-2xl button-shadow disabled:opacity-50" disabled>Stop</button>
+            <button onclick="tryAgain()" class="text-gray-400 hover:text-gray-200 text-sm font-semibold mt-4">Oops! Try again?</button>
+            <p id="mic-status" class="text-sm text-gray-400 mt-2"></p>
+        </div>
+
+        
+        <div id="result-screen" class="screen flex flex-col items-center text-center space-y-6">
+            <h2 id="result-title" class="text-4xl font-bold text-gray-200"></h2>
+            <p id="result-message" class="text-lg text-gray-400"></p>
+            <p id="result-food-name" class="text-2xl font-semibold text-gray-200"></p>
+            <button onclick="tryAgain()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-4 px-8 rounded-2xl button-shadow">Try Again</button>
+        </div>
+
+    </div>
+
+    <script>
+        
+        const MOOD_THEMES = {
+            'happy': {
+                title: "Feeling Happy?",
+                description: "Vibrant and joyful colors for a cheerful experience.",
+                colors: { background: 'mood-happy', button: 'bg-pink-700', hover: 'hover:bg-pink-800', icon: '😊' },
+                decor: 'Balloons, Confetti, Sparkles!'
+            },
+            'excited': {
+                title: "Feeling Excited?",
+                description: "Energetic and lively colors for a high-spirited moment.",
+                colors: { background: 'mood-excited', button: 'bg-amber-700', hover: 'hover:bg-amber-800', icon: '🤩' },
+                decor: 'Fireworks, Neon Lights, Dynamic Patterns!'
+            },
+            'sad': {
+                title: "Feeling Sad?",
+                description: "Calm and comforting colors for a cozy, peaceful time.",
+                colors: { background: 'mood-sad', button: 'bg-gray-700', hover: 'hover:bg-gray-800', icon: '😞' },
+                decor: 'Soft Rain, Muted Tones, Cozy Blankets.'
+            },
+            'angry': {
+                title: "Feeling Angry?",
+                description: "Fiery and bold colors to match your intense mood.",
+                colors: { background: 'mood-angry', button: 'bg-red-800', hover: 'hover:bg-red-900', icon: '😡' },
+                decor: 'Fiery Embers, Jagged Edges, Storm Clouds!'
+            }
+        };
+
+        const FOOD_OPTIONS = {
+            'happy': [
+                { name: "Puttu and Kadala Curry", icon: '🍚', description: "A classic steamed rice cake and black chickpea curry." },
+                { name: "Ada Pradhaman", icon: '🍲', description: "A sweet and delicious dessert made with rice flakes and jaggery." },
+                { name: "Palada Payasam", icon: '🍮', description: "A festive rice and milk pudding." },
+                { name: "Unniyappam", icon: '🥞', description: "Sweet fried rice balls, perfect for a happy mood." },
+                { name: "Kozhukatta", icon: '🍡', description: "Steamed rice dumplings with a sweet coconut filling." },
+                { name: "Pazham Pori", icon: '🍌', description: "Sweet and crispy banana fritters." },
+                { name: "Appam with Stew", icon: '🍚', description: "Fluffy pancakes with a mild, coconut-based vegetable stew." },
+                { name: "Ela Ada", icon: '🌿', description: "Steamed rice cakes with sweet jaggery-coconut filling, wrapped in a banana leaf." },
+                { name: "Chakka Varuthathu", icon: '🥔', description: "Crispy jackfruit chips, a crunchy and delightful snack." }
+            ],
+            'excited': [
+                { name: "Karimeen Pollichathu", icon: '🐟', description: "Pearl spot fish marinated and grilled in a banana leaf." },
+                { name: "Chicken Kizhi Porotta", icon: '🍗', description: "Chicken curry wrapped and baked inside porotta." },
+                { name: "Kappa Biriyani", icon: '🍛', description: "A spicy biriyani made with tapioca and beef." },
+                { name: "Prawn Roast", icon: '🦐', description: "Spicy and tangy prawns roasted in a thick gravy." },
+                { name: "Beef Ularthiyathu", icon: '🥩', description: "Spicy and tender fried beef." },
+                { name: "Thalassery Biryani", icon: '🍲', description: "Fragrant biryani with spices and chicken, perfect for a celebration." },
+                { name: "Kallummakkaya (Mussel) Fry", icon: '🐚', description: "Spicy and crunchy fried mussels." },
+                { name: "Fish Moilee", icon: '🥥', description: "A creamy and mild fish curry." },
+                { name: "Duck Roast", icon: '�', description: "A spicy and rich roasted duck dish." }
+            ],
+            'sad': [
+                { name: "Kanji and Payar", icon: '🥣', description: "A simple, warm rice porridge with green gram curry." },
+                { name: "Vellappam and Egg Roast", icon: '🥚', description: "Soft, lacy pancakes with a comforting egg curry." },
+                { name: "Meen Vevichathu", icon: '🐟', description: "A warm and tangy fish curry." },
+                { name: "Sadhya", icon: '🍽️', description: "A comforting full-course meal with multiple dishes." },
+                { name: "Pathiri with Chicken Curry", icon: '🥞', description: "Thin rice pancakes with a rich, soothing chicken curry." },
+                { name: "Prawns Mango Curry", icon: '🥭', description: "A tangy and comforting curry with prawns and raw mango." },
+                { name: "Tapioca and Fish Curry", icon: '🥔', description: "Boiled tapioca served with a spicy fish curry." },
+                { name: "Erissery", icon: '🍲', description: "A mild and sweet pumpkin and lentil curry." },
+                { name: "Thoran", icon: '🥗', description: "A comforting stir-fry with coconut and vegetables." }
+            ],
+            'angry': [
+                { name: "Beef Dry Fry", icon: '🥩🔥', description: "Very spicy and fiery fried beef." },
+                { name: "Prawns Roast with extra chili", icon: '🌶️🦐', description: "Prawns roasted with a heavy dose of spicy masala." },
+                { name: "Kerala Beef Fry", icon: '🐂', description: "Extra spicy beef fry with red chili and curry leaves." },
+                { name: "Spicy Fish Curry (Meen Curry)", icon: '🌶️🐟', description: "A very hot and spicy fish curry made with raw mango." },
+                { name: "Chicken Vindaloo", icon: '🍗🔥', description: "A fiery chicken dish with a strong vinegar and spice base." },
+                { name: "Theeyal", icon: '🍲', description: "A very hot and tangy curry made with roasted coconut and vegetables." },
+                { name: "Chicken 65", icon: '🐔', description: "A spicy and deep-fried chicken appetizer." },
+                { name: "Chemmeen Curry", icon: '🦐', description: "A tangy and spicy prawn curry." },
+                { name: "Fish Biryani", icon: '🍛', description: "A spicy and aromatic biryani with fish." }
+            ]
+        };
+
+        let currentMood = '';
+        let selectedFood = null;
+        let audioContext = null;
+        let analyser = null;
+        let microphoneStream = null;
+        let animationFrameId = null;
+        let decibelSum = 0;
+        let sampleCount = 0;
+
+        const moodScreen = document.getElementById('mood-screen');
+        const foodScreen = document.getElementById('food-screen');
+        const foodOptionsContainer = document.getElementById('food-options');
+        const microwaveScreen = document.getElementById('microwave-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const simulatorContainer = document.getElementById('simulator-container');
+        const body = document.body;
+        const resultTitle = document.getElementById('result-title');
+        const resultMessage = document.getElementById('result-message');
+        const resultFoodName = document.getElementById('result-food-name');
+        const selectedFoodIcon = document.getElementById('selected-food-icon');
+        const decibelBar = document.getElementById('decibel-bar');
+        const heatingOverlay = document.getElementById('heating-overlay');
+        const micStatus = document.getElementById('mic-status');
+        const stopBtn = document.getElementById('stop-btn');
+
+        
+        function showScreen(screen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+            screen.style.display = 'flex';
+            screen.classList.add('active');
+        }
+
+        function selectMood(mood) {
+            currentMood = mood;
+            const theme = MOOD_THEMES[mood];
+            
+            body.className = `flex items-center justify-center p-4 ${theme.colors.background}`;
+            const foodTitle = document.getElementById('food-title');
+            const foodDescription = document.getElementById('food-description');
+            foodTitle.textContent = `You've chosen **${mood.toUpperCase()}**!`;
+            foodDescription.textContent = theme.description;
+
+            foodOptionsContainer.innerHTML = '';
+            FOOD_OPTIONS[mood].forEach(food => {
+                const button = document.createElement('button');
+                button.onclick = () => selectFood(food);
+                button.className = `food-btn p-4 rounded-2xl flex flex-col items-center space-y-2 font-bold transition-all ${theme.colors.button} ${theme.colors.hover} text-white button-shadow`;
+                button.innerHTML = `<span class="text-5xl">${food.icon}</span><span>${food.name}</span>`;
+                foodOptionsContainer.appendChild(button);
+            });
+
+            showScreen(foodScreen);
+        }
+
+        
+        function selectFood(food) {
+            selectedFood = food;
+            selectedFoodIcon.textContent = food.icon;
+            showScreen(microwaveScreen);
+            
+            
+            startHeating();
+        }
+
+        
+        async function startHeating() {
+            stopBtn.disabled = true;
+            micStatus.textContent = 'Requesting microphone access...';
+            
+            try {
+                microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(microphoneStream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+
+                decibelSum = 0;
+                sampleCount = 0;
+
+                micStatus.textContent = 'Mic is active. The microwave is heating!';
+                stopBtn.disabled = false;
+                heatingOverlay.classList.remove('opacity-0');
+                selectedFoodIcon.classList.add('heating-food');
+
+                function getDecibel() {
+                    if (!analyser) return;
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    const average = sum / bufferLength;
+                    const decibelLevel = Math.min(100, Math.max(0, (average / 255) * 100));
+                    
+                    decibelSum += decibelLevel;
+                    sampleCount++;
+                    decibelBar.style.width = `${decibelLevel}%`;
+                    
+                    animationFrameId = requestAnimationFrame(getDecibel);
+                }
+                
+                getDecibel();
+
+            } catch (err) {
+                console.error("Microphone access denied or error:", err);
+                micStatus.textContent = 'Microphone access denied. Please allow to use this feature.';
+                stopBtn.disabled = true;
+                heatingOverlay.classList.add('opacity-0');
+            }
+        }
+        
+        
+        function stopHeating() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            if (microphoneStream) {
+                microphoneStream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+
+            heatingOverlay.classList.add('opacity-0');
+            selectedFoodIcon.classList.remove('heating-food');
+            stopBtn.disabled = true;
+            micStatus.textContent = '';
+            
+            const avgDecibels = sampleCount > 0 ? decibelSum / sampleCount : 0;
+            let resultText = '';
+            let outcome = '';
+
+            if (avgDecibels < 60) {
+                outcome = 'undercooked';
+                resultText = "Undercooked! Can't eat.";
+            } else {
+                outcome = 'overcooked';
+                resultText = "Overcooked! Too fried.";
+            }
+
+            resultTitle.textContent = resultText;
+            resultTitle.className = `text-4xl font-bold ${outcome}`;
+            resultMessage.textContent = `You heated your food with an average decibel level of ${avgDecibels.toFixed(2)} dB.`;
+            resultFoodName.textContent = selectedFood.name;
+
+            simulatorContainer.style.animation = 'pulse-once 0.5s ease-in-out';
+            setTimeout(() => {
+                simulatorContainer.style.animation = '';
+            }, 500);
+
+            showScreen(resultScreen);
+        }
+
+       
+        function tryAgain() {
+            selectedFood = null;
+            currentMood = '';
+            body.className = `flex items-center justify-center p-4 mood-happy`;
+            showScreen(moodScreen);
+        }
+
+       
+        window.onload = function() {
+            showScreen(moodScreen);
+        };
+    </script>
+</body>
+</html>
