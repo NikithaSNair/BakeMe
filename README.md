@@ -3,7 +3,7 @@
 
 # Mood Microwave simulator 🎯
 
-### Team Name: Pixelle
+### Team Name: Pixelle 🌷
 
 
 ### Team Members
