@@ -41,14 +41,15 @@ Users can try again anytime to select different moods or food.
 
 # Screenshots 
 
-<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
-<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
-<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
-<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
+<img width="1895" height="889" alt="Screenshot 2025-08-02 052323" src="https://github.com/user-attachments/assets/014585ce-4052-4f60-94f2-24fcfd5012ea" />
+<img width="1892" height="850" alt="Screenshot 2025-08-02 052346" src="https://github.com/user-attachments/assets/37a19298-ad6f-4f9b-afbb-fc38babc46a9" />
+<img width="1907" height="876" alt="Screenshot 2025-08-02 052433" src="https://github.com/user-attachments/assets/903d0bb5-2b0f-4760-aaba-f4dfd3f5b083" />
+<img width="1906" height="883" alt="Screenshot 2025-08-02 052919" src="https://github.com/user-attachments/assets/ef22e5a0-f81d-4280-88f4-422b1cfa5d02" />
 
 ### Project Demo
 # Video
-<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
+https://github.com/user-attachments/assets/ac846339-70aa-4ea1-8f2d-489a70a283a3
+
 
 
 Introduction & Setup
