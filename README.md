@@ -11,14 +11,14 @@
 - Member 2: Nikitha S Nair - LBSITW
 
 ### Project Description
-We use OpenCV to detect your mood and then recommend some delicious food for you. The twist is that you have to scream loudly to heat your food in the oven! The louder you scream, the more your food gets cooked—but beware, if you scream too much, your food might end up burnt, and we’ll show your decibel level to track it!
+The “Mood Microwave Simulator” is a fun, interactive web app where users manually select their current mood—Happy, Excited, Sad, or Angry—and receive tailored food recommendations matching that mood. Instead of traditional cooking, users “heat” their chosen food by screaming into their device’s microphone. The louder the scream, the more the virtual food cooks, tracked by a decibel meter. After heating, the app calculates if the food is undercooked or overcooked based on the average sound level, providing a humorous, playful experience. It’s built using HTML5, JavaScript, Tailwind CSS, and the Web Audio API, combining mood-driven personalization with an unusual, entertaining cooking mechanic for a unique digital food interaction.
 
 ### The Problem (that doesn't exist)
 Ever found yourself craving food but feeling too moody to decide what to eat? Or maybe you wish cooking involved less boring pots and pans and more... screaming? 
 Well, here’s the conundrum: How do we use cutting-edge computer vision and your vocal cords to whip up some grub in the most chaotic kitchen experiment ever?
 
 ### The Solution (that nobody asked for)
- We’ll use OpenCV to read your mood — happy, sad, hangry, you name it. Based on that mood, we recommend some drool-worthy dishes. But here’s the kicker: Instead of a microwave or stove, you heat your meal by unleashing your inner banshee. The louder you scream, the more your food cooks (or burns). Decibel meter at the ready, because if you go full rock concert mode, prepare for a charred masterpiece. It’s food tech meets rock star rage—entertainment and dinner all in one!
+ We let you decide your mood—happy, sad, hangry, or anything in between. Based on your chosen vibe, we’ll recommend some seriously drool-worthy dishes. But here’s the twist: forget the microwave or stove, because you’ll be heating your meal by unleashing your inner banshee! The louder you scream into your device, the more your food cooks (or burns). A decibel meter tracks your rockstar performance—go full concert mode, and get ready for a charred masterpiece. It’s food tech meets rock star rage—entertainment, suspense, and dinner all in one!
 
 ## Technical Details
 ### Technologies/Components Used
