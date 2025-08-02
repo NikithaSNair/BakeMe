@@ -41,14 +41,16 @@ Users can try again anytime to select different moods or food.
 
 # Screenshots 
 
-https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe
-https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe
-https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe
-https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe
+<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
+<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
+<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
+<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
 
 ### Project Demo
 # Video
-https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe
+<https://drive.google.com/drive/folders/1b-nZsD917ZjMuMrEIQkmqKqd8iH1ElAe>
+
+
 Introduction & Setup
 
 The demo starts by opening the simulator in a modern web browser.
